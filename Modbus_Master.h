@@ -7,9 +7,11 @@ extern "C"
 #endif
 
 #define MB_MASTER_VERSION 1.1
-
+#include "MB_Config.h"
 #include <stdint.h>
+#ifdef _MB_USE_MALLOC
 #include <stdlib.h>
+#endif
 #include <string.h>
 #include "Modbus_MISC.h"
 #include <stdbool.h>
@@ -83,8 +85,12 @@ extern "C"
 		uint8_t TX_Complete : 1;
 		uint8_t Busy : 1;
 
+#ifndef _MB_TICKLESS
 		// used internally to generate non blocking delays
 		uint32_t Ticks;
+#else
+		uint16_t InnerTicks;
+#endif
 
 		uint16_t TX_MSG_LEN;
 		uint16_t RX_MSG_LEN;	 // the expected message length is computed and stpred inside her
@@ -96,8 +102,8 @@ extern "C"
 		MB_FC_t Fcn;			 // the function code inside the message
 		uint8_t Seq;			 // internal variable for the state machine
 
-		MB_Status_t MB_Stat;	 //holds the status of the transaction
-		MB_EXC_CODE MB_EXE;      //holds the exception code for the modbus
+		MB_Status_t MB_Stat; // holds the status of the transaction
+		MB_EXC_CODE MB_EXE;	 // holds the exception code for the modbus
 	} MB_Master_t;
 
 	/*
@@ -124,6 +130,10 @@ extern "C"
 	/// @param MB ptr to the MB_Master_t struct
 	/// @param Ticks the current system tick count, like millis() for arduino
 	void MB_Master_Routine(MB_Master_t *MB, uint32_t Ticks);
+
+#ifdef _MB_TICKLESS
+	void MB_Master_Update_Tick(MB_Master_t *MB);
+#endif
 
 	/// @fn void MB_Master_TX_Complete(MB_Master_t*)
 	/// @brief

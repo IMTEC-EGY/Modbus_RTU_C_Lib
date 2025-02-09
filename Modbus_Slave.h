@@ -1,7 +1,6 @@
 #ifndef _MODBUS_SLAVE
 #define _MODBUS_SLAVE
 
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -9,8 +8,12 @@ extern "C"
 
 #define MB_SLAVE_VERSION 1.1
 
+#include "MB_Config.h"
+
 #include <stdint.h>
+#ifdef _MB_USE_MALLOC
 #include <stdlib.h>
+#endif
 #include <string.h>
 #include "Modbus_MISC.h"
 
@@ -81,7 +84,13 @@ extern "C"
 		uint8_t IsInitialized : 1;
 		uint8_t TX_Complete : 1;
 
+#ifndef _MB_TICKLESS
 		uint32_t Ticks;
+#else
+	// inner tick timer used for tickless operation
+	// this is to be used for lightweight 8-bit systems
+	uint16_t InnerTicks;
+#endif
 
 		// variabels for processing requests
 		uint16_t TX_MSG_LEN;
@@ -135,11 +144,18 @@ extern "C"
 	/// @return
 	MB_Status_t MB_Slave_Add_Byte(MB_Slave_t *MB, uint8_t data);
 
-	/// @brief Slave routine to be called periodically
-	/// @param MB 
-	/// @param Ticks 
+/// @brief Slave routine to be called periodically
+/// @param MB ptr to the MB_Master_t struct holding its configuration
+/// @param Ticks
+#ifndef _MB_TICKLESS
 	void MB_Slave_Routine(MB_Slave_t *MB, uint32_t Ticks);
+#else
+void MB_Slave_Routine(MB_Slave_t *MB);
 
+/// @brief for tickless operation, call this function to update the internal tick counter
+/// @param MB ptr to the MB_Master_t struct holding its configuration
+void MB_Slave_Update_Tick(MB_Slave_t *MB);
+#endif
 #ifdef __cplusplus
 }
 #endif

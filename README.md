@@ -4,6 +4,11 @@
 
 - 1.9 Added a `_MB_USE_CRC_LOOKUP`, when defined, the library will use a lookup table instead of direct calculation, faster but consumes 512bytes of ROM
 - 2.0 Fixed the modbus master callback to issue MB_Ok in case of success
+- 2.1 : Added `_MB_USE_MALLOC`, when defined, the library will include the `stdlib` and dynamically allocate the TX and RX buffers, as well as the 4 memory allocations (holding regs, input regs, input bits and coil bits).
+Added `_MB_TICKLESS`, when defined, the system operates without a tick timer (tickless operation) then the user is required to call the `MB_Master_Update_Tick` or `MB_Slave_Update_Tick` functions to update the tick counter
+
+### Before you start coding
+Make sure you correctly configure the file `MB_Config.h` depending on your usage
 
 ### How to use --> Slave
 

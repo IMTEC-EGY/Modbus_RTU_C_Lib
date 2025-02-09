@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
+#include "MB_Config.h"
 
 typedef enum {
 	MB_STAT_OK,

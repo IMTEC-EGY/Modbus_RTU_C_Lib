@@ -6,6 +6,18 @@
 #pragma message ("modbus will be using LUT calculation (faster but takes 512 more bytes in the .ro section) _MB_USE_CRC_LOOKUP defined")
 #endif
 
+#ifdef _MB_USE_MALLOC
+#pragma message ("modbus will be using MALLOC to allocate the TX & RX buffer as well as the Modbus memory")
+#else
+#pragma message ("modbus will not be using MALLOC, so the user must pass arrays for the TX buffer, RX buffer, Input Bits, Coil Bits, Holding Regs and Input Regs")
+#endif
+
+#ifndef _MB_TICKLESS
+#pragma message ("modbus will be operating in Tick mode where the MB_xx_Routine function gets the tick counter value")
+#else
+#pragma message ("modbus will be operating in tickless operation, the user must call the MB_xx_Update_Tick for the bus to operate correctly")
+#endif
+
 //used for setting
 static const uint8_t BitMasks[8] =
 { 1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80 };
